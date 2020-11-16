@@ -1,0 +1,40 @@
+.front-page pre {
+    display: flex;
+    justify-content: center;
+    background-color: transparent;
+    margin-bottom: 12rem;
+}
+.front-page pre code {
+    display: inline;
+    background-color: transparent !important;
+    text-align: left;
+}
+
+.img {
+    max-height: 33rem;
+    max-width: 100%;
+}
+.img.center {
+    margin: 0 auto;
+}
+
+.agenda ul {
+    position: relative !important;
+}
+
+.innrykk {
+    margin-left: 2rem;
+}
+
+.credits {
+    position: absolute;
+    bottom: 12px;
+    left: 10px;
+    opacity: 0.5;
+}
+
+:root {
+    --arrow-height: 3rem;
+    --arrow-width: 3rem;
+    --arrow-color: #767676;
+}
