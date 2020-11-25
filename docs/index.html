@@ -25,35 +25,29 @@
 
     ---
 
-    class: agenda
-
-    # Agenda
-
-    * Intro
-
-    ???
-
-
-    ### Intro
-    Rask liten intro hvor vi avmystifiserer hva DSLer er, sammenligner litt med java, og ser på hvordan vi kanskje allerede har brukt de uten å være klar over det.
-    Og litt rask gjennomgang av hva vi undersøke nærmere i dag.
-
-    ---
-
     class: center middle
     # Intro
 
     ???
 
-    Vi starter med litt avmystifisering og titter senere litt på noen eksempler "from the wild"
+    ### Intro
 
+    - Avmystifisering av hva DSLer er (Mini-språk). Definisjon;
+      Definisjon av DSL, "språk"/api spesialisert til ett domene, i motsetning til general-purpose-langages som f.eks java og kotlin.
+    - DSLer og Java, er også helt mulig
+    - Men kotlin gjør det enklere, og gir deg muligheter til å skrive "bedre" DSLer
+    - Alle har sannsynligvis brukt en DSL
+    - I kotlin doc'en så finner man eksemplet under "typesafe-builder"
+
+    Opplegget i dag, blir veldig lav-terskel.
+    Vi ser på noen enkle kode-eksempler som sammenligner "standard" eksemplet på DSLer i java og kotlin.
+    Også hopper vi over til litt "live-koding", og ser om vi kan lage våre egne DSLer også
 
     ---
 
     class: cols two
     # Intro
 
-    Sammenligning med litt java-kode;
     .col[
     Java:
     ```java
@@ -79,17 +73,23 @@
 
     ???
 
+
+
     Her har vi to forskjellige måter å lage ett "Møte" på. Vi ser den helt standard måten der vi lager objekter
     og sender de inn som argumenter til en konstruktør. Og nedenfor, ser vi "samme koden" bare implementert ved hjelp av builder-pattern.
 
     Variablen `faggruppemote` vil her inneholde akkurat samme type objekt, da `Mote.Builder::build()` returnerer ett `Mote`.
+
+    Så mange DSLer man finner på nettet, og spesielt de man finner i random tutorials er bunn og grunn bare en
+    implementasjon av builder-pattern. Kanskje derfor kotlin-doc'en også kaller DSLer for typesafe-builders.
+
+    Men vi skal se litt mer på dette, og se om det ikke finnes andre "typer" DSLer som kanskje gir oss mer verdi også.
 
     ---
 
     class: cols two
     # Intro
 
-    Sammenligning med litt java-kode;
     .col[
     Java:
     ```java
@@ -116,6 +116,7 @@
 
     Vi kunne såklart ha hoppet over `Builder` klassene og bare skrevet det på denne måten.
     Men for at det skal fungere må `Mote` og `Dato` implementeres på en litt annen måte, siden vi nå driver å muterer på dem.
+    Og da kommer hele diskusjonen om mutable og immutable data-objekter inn, en ting vi ikke skal gå for mye inn på i dag.
 
     E.g `mote.tema("Kotlin DSLs")` er i bunn og grunn det samme som `mote.setTema("Kotlin DSLs")` eller kanskje mer nøyaktig `mote.withTema("Kotlin DSLs")`
 
@@ -124,7 +125,6 @@
     class: cols two
     # Intro
 
-    Sammenligning med litt java-kode;
     .col[
     Java:
     ```java
@@ -150,15 +150,14 @@
 
     ???
 
-    Her har vi to forskjellige måter å lage ett "Møte" på. Vi ser den helt standard måten der vi lager objekter
-    og sender de inn som argumenter til en konstruktør. Og nedenfor, ser vi "samme koden" bare implementert ved hjelp av builder-pattern.
+    # BUILDER BITEN TILBAKE
+    Så vi hopper tilbake til å ha builder biten her, og antar at data-klassene våre er immutable.
 
     ---
 
     class: cols two
     # Intro
 
-    Sammenligning med litt java-kode;
     .col[
     Java:
     ```java
@@ -200,7 +199,105 @@
 
     ???
 
-    Beskrivelse her
+    Så får vi på plass litt kotlin kode også, endelig.
+
+    Og det vi ser er jo at syntaks messig så er det veldig likt det vi har i java-verden.
+    Litt mindre builder-boilerplate greier, men ikke veldig mye.
+
+    Vi ser jo også at "standard" måten gir mindre kode, men ofrer litt av lesbarheten.
+    Mye av det kunne vi hentet tilbake vha named-parameters.
+
+    ---
+
+
+
+    class: cols two
+    # Intro
+
+    .col[
+    Java:
+    ```java
+    Mote faggruppemote = new Mote(
+      "Kotlin DSLs",
+      new Dato(2020, 11, 25)
+    );
+
+    // Alternativt
+    Mote faggruppemote = new Mote.Builder()
+      .tema("Kotlin DSLs")
+      .dato(new Dato.Builder()
+        .ar(2020)
+        .maned(11)
+        .dag(25)
+        .build()
+      ).build();
+    ```
+    ]
+    .col[
+    Kotlin:
+    ```kotlin
+    val faggruppemote = Mote(
+      tema = "Kotlin DSLs",
+      dato = Dato(
+        ar = 2020,
+        maned = 11,
+        dag = 25
+      )
+    )
+
+    // Alternativt
+    val faggruppemote = mote {
+      tema = "Kotlin DSLs"
+      dato {
+        ar = 2020
+        maned = 11
+        dag = 25
+      }
+    }
+    ```
+    ]
+
+    ???
+
+    Så får vi på plass litt kotlin kode også, endelig.
+
+    Og det vi ser er jo at syntaks messig så er det veldig likt det vi har i java-verden.
+    Litt mindre builder-boilerplate greier, men ikke veldig mye.
+
+    Vi ser jo også at "standard" måten gir mindre kode, men ofrer litt av lesbarheten.
+    Mye av det kunne vi hentet tilbake vha named-parameters.
+
+    ---
+
+    class: center middle
+    # Tid for IntelliJ
+
+
+    ---
+
+    # Oppsummering
+
+
+
+    ???
+
+    DSLer er i bunn og grunn akkurat hva du definerer det til å være selv.
+
+    Vi har tittet på ett enkelt eksempel på;
+    - datastrukturer - builder-pattern som DSL
+    - Jetbrains' SQL-ORM DSL, og hvordan det kan gi litt type-sikkerhet mot databasene deres
+    - Hvor man kan bruke DSLer for enda mer avanserte datastrukturer (XML/HTML)
+    - Hvordan KTOR har brukt det for definisjonen av sin konfigurasjon
+    - Og hvordan man kan bruke det i tester.
+
+    "Oppsummert" er det ett mini-språk/API som kan i noen tilfeller gjøre livet ditt litt lettere.
+    Men det er ingen silver-bullet, og det er ikke alltid en DSL er løsningen på problemet.
+
+    Min lille anbefaling;
+    Ikke lag DSLer så sant det ikke er for noe som skal brukes av andre, eller dere har ett veldig klart og tydelig definert domene.
+    Forvaltningen av DSLen har også en kostnad.
+
+    Så må jeg nå bare begynne å følge mitt eget råd. :/
 
     ---
 
